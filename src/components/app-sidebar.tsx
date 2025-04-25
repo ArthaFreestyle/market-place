@@ -51,33 +51,33 @@ const data = {
   projects: [
     {
       name: "Dashboard",
-      url: "dashboard",
+      url: "/dashboard",
       icon: Package,
       isActive: true,
     },
     {
       name: "Brand",
-      url: "dashboard/brand",
+      url: "/dashboard/brand",
       icon: Building,
     },
     {
       name: "Category",
-      url: "dashboard/category",
+      url: "/dashboard/categories",
       icon: ChartArea,
     },
     {
       name: "Orders", 
-      url: "dashboard/orders",
+      url: "/dashboard/orders",
       icon: ShoppingCart,
     },
     {
       name: "Products", 
-      url: "dashboard/products",
+      url: "/dashboard/products",
       icon: Archive,
     },
     {
       name: "Customers", 
-      url: "dashboard/customers",
+      url: "/dashboard/customers",
       icon: User2,
     },
 

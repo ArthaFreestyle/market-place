@@ -1,5 +1,7 @@
 "use client"
 
+import { logout } from "@/app/(admin)/dashboard/(index)/lib/actions"
+
 import {
   BadgeCheck,
   Bell,
@@ -29,6 +31,13 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
+import { ActionResult } from "@/types"
+import { useActionState } from "react"
+
+const initialState:ActionResult = {
+  error:'',
+}
+
 
 export function NavUser({
   user,
@@ -40,6 +49,7 @@ export function NavUser({
   }
 }) {
   const { isMobile } = useSidebar()
+  const [state,formAction] = useActionState(logout,initialState)
 
   return (
     <SidebarMenu>
@@ -103,8 +113,12 @@ export function NavUser({
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
-              <LogOut />
-              Log out
+            <form action={formAction}>
+              <button className="flex items-center w-full px-4 py-2 text-left text-sm font-normal text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground">
+                <LogOut className="h-5 w-5"/>
+                Log out
+              </button>
+            </form>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

@@ -4,6 +4,7 @@ import { Lucia } from "lucia";
 import { RoleUser } from "@prisma/client";
 import { cache } from "react";
 import { cookies } from "next/headers";
+import { Session, User } from "lucia";
 
 
 const adapter = new PrismaAdapter(prisma.session,prisma.user);
@@ -20,29 +21,31 @@ export const lucia = new Lucia(adapter,{
             id: attribute.id,
             name: attribute.name,
             email: attribute.email,
-            role: attribute.role
+            role: attribute.type
         }
     }
 })
 
-export const getUser = cache(async () => {
+export const getUser = cache(async ():Promise<{user : User , session:Session} | {user:null,session:null}> => {
     const cookieStore = await cookies();
 	const sessionId = cookieStore.get(lucia.sessionCookieName)?.value ?? null;
-	if (!sessionId) return null;
-	const { user, session } = await lucia.validateSession(sessionId);
+	if (!sessionId) {
+        return { user: null, session: null };
+    };
+	const result = await lucia.validateSession(sessionId);
 	try {
-		if (session && session.fresh) {
-			const sessionCookie = lucia.createSessionCookie(session.id);
+		if (result.session && result.session.fresh) {
+			const sessionCookie = lucia.createSessionCookie(result.session.id);
 			cookieStore.set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
 		}
-		if (!session) {
+		if (!result.session) {
 			const sessionCookie = lucia.createBlankSessionCookie();
 			cookieStore.set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
 		}
 	} catch {
 		// Next.js throws error when attempting to set cookies when rendering page
 	}
-	return user;
+	return result;
 });
 
 
@@ -54,7 +57,7 @@ declare module "lucia" {
             id: number;
             name: string;
             email: string;
-            role: RoleUser;
+            type: RoleUser;
         }
 	}
 }
