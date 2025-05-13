@@ -1,31 +1,97 @@
-"use server"
+"use server";
 
+import { schemaCategory } from "@/lib/schema";
 import { ActionResult } from "@/types";
 import { redirect } from "next/navigation";
-import { schemaCategory } from "@/lib/schema";
 import prisma from "../../../../../../../lib/prisma";
 
-export async function createCategory(_:unknown,formData: FormData):Promise<ActionResult> {
-    console.log(formData.get("category"))
+export async function postCategory(
+	_: unknown,
+	formData: FormData
+): Promise<ActionResult> {
+	const validate = schemaCategory.safeParse({
+		name: formData.get("name"),
+	});
 
-    const validate = schemaCategory.safeParse({
-        category: formData.get("category"),
-    })
+	if (!validate.success) {
+		return {
+			error: validate.error.errors[0].message,
+		};
+	}
 
-    if (!validate.success) {
-        const formatted = validate.error.format()
-        return { error: String(formatted.category?._errors) }
-    }
+	try {
+		await prisma.category.create({
+			data: {
+				name: validate.data.name,
+			},
+		});
+	} catch (error) {
+		console.log(error);
+		return {
+			error: "Failed to insert data",
+		};
+	}
 
-    try {
-        const category = await prisma.category.create({
-            data: {
-                name: validate.data.category,
-            },
-        })
-    } catch (error) {
-        console.error("Error creating category:", error)
-        return { error: "Failed to create category" }
-    }
-    return redirect("/dashboard/categories")
+	return redirect("/dashboard/categories");
+}
+
+export async function updateCategory(
+	_: unknown,
+	formData: FormData,
+	id: number | undefined
+): Promise<ActionResult> {
+	const validate = schemaCategory.safeParse({
+		name: formData.get("name"),
+	});
+
+	if (!validate.success) {
+		return {
+			error: validate.error.errors[0].message,
+		};
+	}
+
+	if (id === undefined) {
+		return {
+			error: "Id is not found",
+		};
+	}
+
+	try {
+		await prisma.category.update({
+			where: {
+				id: id,
+			},
+			data: {
+				name: validate.data.name,
+			},
+		});
+	} catch (error) {
+		console.log(error);
+		return {
+			error: "Failed to update data",
+		};
+	}
+
+	return redirect("/dashboard/categories");
+}
+
+export async function deleteCategory(
+	_: unknown,
+	formData: FormData,
+	id: number
+): Promise<ActionResult> {
+	try {
+		await prisma.category.delete({
+			where: {
+				id,
+			},
+		});
+	} catch (error) {
+		console.log(error);
+		return {
+			error: "Failed to delete data",
+		};
+	}
+
+	return redirect("/dashboard/categories");
 }

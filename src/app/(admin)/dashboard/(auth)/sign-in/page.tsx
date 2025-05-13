@@ -1,11 +1,12 @@
-import LoginForm from "@/components/login-form"
 
-export default function Page() {
+import FormSignIn from "./_components/form"
+
+export default function SignInPage() {
   return (
-    <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
-      <div className="w-full max-w-sm">
-        <LoginForm />
-      </div>
-    </div>
+    <main className="w-full h-screen overflow-hidden relative">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+          <FormSignIn />
+        </div>
+    </main>
   )
 }

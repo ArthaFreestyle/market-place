@@ -1,28 +1,34 @@
-'use server'
+"use server"
 
-import { redirect } from "next/navigation"
-import { ActionResult } from "@/types"
-import { getUser,lucia } from "@/lib/auth";
+import { getUser, lucia } from "@/lib/auth";
+import { ActionResult } from "@/types";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
-
-export async function logout (
-    _ : unknown,
-    formData : FormData
+export async function Logout(
+    _: unknown,
+    formData: FormData,
 ): Promise<ActionResult> {
-    console.log('Logging out');
-    const {session} = await getUser();
+    console.log('logout');
 
-    if(!session){
+    const {session} = await getUser()
+
+    if (!session) {
         return {
-            error : 'Unauthorized'
-        };
+            error: 'Unauthorized'
+        }
     }
 
-    await lucia.invalidateSession(session.id);
-    const sessionCookie = lucia.createBlankSessionCookie();
-    const CookieStore = await cookies();
-    CookieStore.set(sessionCookie.name,sessionCookie.value,sessionCookie.attributes);
+    await lucia.invalidateSession(session.id)
+
+    const sessionCookie = lucia.createBlankSessionCookie()
+
+    cookies().set(
+        sessionCookie.name,
+        sessionCookie.value,
+        sessionCookie.attributes
+    )
+
+    return redirect('/dashboard/sign-in')
     
-    return redirect('/dashboard/sign-in');
 }
