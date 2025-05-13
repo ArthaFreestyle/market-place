@@ -3,25 +3,42 @@ import { getBrands } from '../lib/data'
 import Link from 'next/link'
 
 export default async function ListBrands() {
-    const brands = await getBrands()
+  const brands = await getBrands()
 
   return (
-    <div id="brands" className="flex flex-col gap-[30px]">
-            <div className="flex items-center justify-between">
-                <h2 className="font-bold text-2xl leading-[34px]">Explore Our <br /> Popular Brands</h2>
-                <a href="catalog.html" className="p-[12px_24px] border border-[#E5E5E5] rounded-full font-semibold">Explore All</a>
+    <div id="brands" className="flex flex-col gap-6 px-4 sm:px-6 md:px-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+        <h2 className="font-bold text-xl sm:text-2xl leading-tight sm:leading-[34px]">
+          Explore Our <br className="hidden sm:block" /> Popular Brands
+        </h2>
+        <a
+          href="/catalog"
+          className="px-4 py-2 sm:px-5 sm:py-2.5 border border-[#E5E5E5] rounded-full font-semibold text-sm sm:text-base text-center"
+        >
+          Explore All
+        </a>
+      </div>
+
+      {/* Responsive grid */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
+        {brands.map((item) => (
+          <Link
+            key={`${item.id + item.logo}`}
+            href="#"
+            className="logo-card"
+          >
+            <div className="bg-white flex items-center justify-center p-4 sm:p-5 md:p-6 rounded-xl md:rounded-2xl ring-1 ring-[#E5E5E5] hover:ring-2 hover:ring-[#FFC736] transition-all duration-300 w-full">
+              <div className="w-full h-[30px] flex shrink-0 items-center justify-center overflow-hidden">
+                <img
+                  src={item.logo_url}
+                  className="w-full h-full object-contain"
+                  alt="thumbnail"
+                />
+              </div>
             </div>
-            <div className="grid grid-cols-5 gap-[30px]">
-                {brands.map((item) => (
-                    <Link key={`${item.id + item.logo}`} href="#" className="logo-card">
-                    <div className="bg-white flex items-center justify-center p-[30px_20px] rounded-[20px] ring-1 ring-[#E5E5E5] hover:ring-2 hover:ring-[#FFC736] transition-all duration-300 w-full">
-                        <div className="w-full h-[30px] flex shrink-0 items-center justify-center overflow-hidden">
-                            <img src={item.logo_url} className="w-full h-full object-contain" alt="thumbnail" />
-                        </div>
-                    </div>
-                </Link>
-                ))}
-            </div>
-        </div>
+          </Link>
+        ))}
+      </div>
+    </div>
   )
 }
