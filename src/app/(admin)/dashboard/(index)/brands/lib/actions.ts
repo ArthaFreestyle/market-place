@@ -16,6 +16,7 @@ export async function postBrand(
 	});
 
 	if (!validate.success) {
+		console.log(validate.error.errors[0].message);
 		return {
 			error: validate.error.errors[0].message,
 		};
