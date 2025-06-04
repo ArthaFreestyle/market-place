@@ -1,8 +1,25 @@
-import { getUser } from "@/lib/auth"
-import Link from "next/link"
+'use client'
 
-export default async function Navbar() {
-  const { session, user } = await getUser()
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+
+export default function NavbarClient({ session, user }) {
+  const pathname = usePathname()
+
+  // Function to check if link is active
+  const isActive = (path) => {
+    if (path === '/') {
+      return pathname === '/'
+    }
+    return pathname.startsWith(path)
+  }
+
+  // Function to get link classes
+  const getLinkClasses = (path) => {
+    return isActive(path)
+      ? "font-bold text-[#FFC736] transition-all duration-300"
+      : "hover:font-bold hover:text-[#FFC736] transition-all duration-300 text-white"
+  }
 
   return (
     <nav className="container max-w-[1130px] mx-auto bg-[#0D5CD7] p-5 rounded-3xl relative">
@@ -26,35 +43,30 @@ export default async function Navbar() {
 
         {/* Desktop navigation */}
         <ul className="hidden lg:flex items-center gap-[30px]">
-          <li className="hover:font-bold hover:text-[#FFC736] transition-all duration-300 font-bold text-[#FFC736]">
+          <li className={getLinkClasses('/')}>
             <Link href="/">Shop</Link>
           </li>
-          <li className="hover:font-bold hover:text-[#FFC736] transition-all duration-300 text-white">
+          <li className={getLinkClasses('/catalogs')}>
             <Link href="/catalogs">Catalogs</Link>
           </li>
-          <li className="hover:font-bold hover:text-[#FFC736] transition-all duration-300 text-white">
-            <Link href="/">Testimonials</Link>
-          </li>
-          <li className="hover:font-bold hover:text-[#FFC736] transition-all duration-300 text-white">
-            <Link href="/">Rewards</Link>
+          <li className={getLinkClasses('/article')}>
+            <Link href="/article">Article</Link>
           </li>
         </ul>
 
         {/* Mobile navigation overlay */}
         <div className="fixed inset-0 bg-[#0D5CD7] z-10 flex-col items-center justify-center hidden peer-checked:flex lg:hidden">
           <ul className="flex flex-col items-center gap-6">
-            <li className="hover:font-bold hover:text-[#FFC736] transition-all duration-300 font-bold text-[#FFC736] text-xl">
+            <li className={`${getLinkClasses('/')} text-xl`}>
               <Link href="/">Shop</Link>
             </li>
-            <li className="hover:font-bold hover:text-[#FFC736] transition-all duration-300 text-white text-xl">
+            <li className={`${getLinkClasses('/catalogs')} text-xl`}>
               <Link href="/catalogs">Catalogs</Link>
             </li>
-            <li className="hover:font-bold hover:text-[#FFC736] transition-all duration-300 text-white text-xl">
-              <Link href="/">Testimonials</Link>
+            <li className={`${getLinkClasses('/article')} text-xl`}>
+              <Link href="/article">Article</Link>
             </li>
-            <li className="hover:font-bold hover:text-[#FFC736] transition-all duration-300 text-white text-xl">
-              <Link href="/">Rewards</Link>
-            </li>
+            
             {session && user?.role === "customer" ? (
               <li className="text-white text-xl">Hi, {user.name}</li>
             ) : (

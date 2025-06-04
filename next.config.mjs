@@ -8,6 +8,10 @@ const nextConfig = {
         port: "",
         pathname: "/storage/v1/object/public/belanja/**",
       },
+      {
+        protocol:'https',
+        hostname:'www.w3.org'
+      }
     ],
   },
   eslint: {
